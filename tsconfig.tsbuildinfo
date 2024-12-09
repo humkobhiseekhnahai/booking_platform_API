@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/middlewares/auth.ts","./src/routes/authentication.ts","./src/routes/bookings.ts","./src/routes/calender.ts","./src/routes/profile.ts","./src/utils/client.ts"],"version":"5.7.2"}

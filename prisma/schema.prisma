@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Users {
+  user_id     Int              @id @default(autoincrement())
+  firstName   String?
+  lastName    String?
+  email       String           @unique
+  password    String
+  user_type   user_type
+  Speakers    Speakers?        
+  Bookings    Bookings_table[] 
+  is_verified Boolean          @default(false)
+}
+
+model Speakers {
+  speaker_id   Int       @id @default(autoincrement())
+  user_id      Int       @unique
+  expertise    String?
+  session_cost Decimal?
+  Slots        Slots[]   
+  user         Users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
+
+model Slots {
+  slot_id    Int              @id @default(autoincrement())
+  speaker_id Int             
+  start_time DateTime
+  end_time   DateTime
+  is_booked  Boolean          @default(false)
+  Bookings   Bookings_table[] 
+  speaker    Speakers         @relation(fields: [speaker_id], references: [speaker_id], onDelete: Cascade)
+}
+
+model Bookings_table {
+  booking_id   Int     @id @default(autoincrement())
+  slot_id      Int     
+  user_id      Int     
+  booking_time DateTime @default(now())
+  slot         Slots    @relation(fields: [slot_id], references: [slot_id], onDelete: Cascade)
+  user         Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
+
+enum user_type {
+  user
+  speaker
+}
